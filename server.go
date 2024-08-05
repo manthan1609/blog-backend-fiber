@@ -1,16 +1,42 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"log"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/manthan1609/todo/database"
+	"github.com/manthan1609/todo/router"
+)
+
+func init() {
+	database.ConnectDB()
+}
 
 func main() {
+	sqlDb, err := database.DBConnection.DB()
+
+	if err != nil {
+		panic("error in sql connection")
+	}
+
+	defer func() {
+		sqlDb.Close()
+		log.Println("database connection closed successfully")
+	}()
+
 	app := fiber.New()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{
-			"message": "ok",
-		})
-		// return c.SendString("Go App")
-	})
+	app.Use(logger.New())
+
+	// app.Get("/", func(c *fiber.Ctx) error {
+	// 	return c.JSON(fiber.Map{
+	// 		"message": "ok",
+	// 	})
+
+	// })
+
+	router.SetUpRoutes(app)
 
 	app.Listen(":8000")
 }
