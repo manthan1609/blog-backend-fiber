@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/manthan1609/todo/database"
+	"github.com/manthan1609/todo/models"
 )
 
 // List All Blogs
@@ -12,6 +14,12 @@ func BlogList(c *fiber.Ctx) error {
 		"statusText": "Ok",
 		"msg":        "Blog List",
 	}
+
+	var blogs []models.Blog
+
+	database.DBConnection.Find(&blogs)
+
+	context["blogs"] = blogs
 
 	c.Status(200)
 	return c.JSON(context)
