@@ -29,8 +29,29 @@ func BlogList(c *fiber.Ctx) error {
 // Add a Blog
 func BlogCreate(c *fiber.Ctx) error {
 	context := fiber.Map{
-		"statusText": "Ok",
+		"statusText": "OK",
 		"msg":        "Blog Added",
+	}
+
+	// var blog models.Blog
+	blog := new(models.Blog)
+
+	if err := c.BodyParser(&blog); err != nil {
+		log.Println("error in parsing request")
+		c.Status(400)
+		context["statusText"] = "failed"
+		context["msg"] = "error in parsing request"
+		return c.JSON(context)
+	}
+
+	result := database.DBConnection.Create(blog)
+
+	if result.Error != nil {
+		log.Println("error in creating blog")
+		c.Status(500)
+		context["statusText"] = "failed"
+		context["msg"] = "database error"
+		return c.JSON(context)
 	}
 
 	c.Status(201)
