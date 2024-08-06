@@ -1,7 +1,9 @@
 package database
 
 import (
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/manthan1609/todo/models"
 	"gorm.io/driver/mysql"
@@ -12,7 +14,11 @@ import (
 var DBConnection *gorm.DB
 
 func ConnectDB() {
-	dsn := "root:password@tcp(127.0.0.1:3306)/blog?charset=utf8mb4&parseTime=True&loc=Local"
+	db_user := os.Getenv("DB_USER")
+	db_password := os.Getenv("DB_PASSWORD")
+	db_name := os.Getenv("DB_NAME")
+
+	dsn := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/%s?charset=utf8mb4&parseTime=True&loc=Local", db_user, db_password, db_name)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Error),

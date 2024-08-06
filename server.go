@@ -5,11 +5,16 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/joho/godotenv"
+
 	"github.com/manthan1609/todo/database"
 	"github.com/manthan1609/todo/router"
 )
 
 func init() {
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatalln("error in loading .env file")
+	}
 	database.ConnectDB()
 }
 
